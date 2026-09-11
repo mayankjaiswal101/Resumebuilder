@@ -22,21 +22,23 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 col1, col2 = st.columns([1, 1.2], gap="large")
+
 with col1:
     st.markdown('<div class="header-title">ATS Resume Builder</div>', unsafe_allow_html=True)
-    st.subheader("👤 Personal Info")
+    st.subheader("Personal Info")
     full_name = st.text_input("Full Name", placeholder="Enter your full name")
     email = st.text_input("Email", placeholder="yourname@gmail.com")
-        phone = st.text_input("Phone", placeholder="9876543210")
+    phone = st.text_input("Phone", placeholder="9876543210")
     linkedin = st.text_input("LinkedIn", placeholder="linkedin.com/in/yourname")
-    st.subheader("🎓 Education")
+    st.subheader("Education")
     education = st.text_area("Education", placeholder="B.Tech CSE - College Name", height=80)
-    st.subheader("💻 Skills")
+    st.subheader("Skills")
     skills = st.text_area("Skills", placeholder="Python, Java, SQL", height=80)
-    st.subheader("💼 Experience")
+    st.subheader("Experience")
     experience = st.text_area("Experience", placeholder="Intern at ABC Company", height=120)
+
 with col2:
-    st.markdown("### 👀 Live Preview")
+    st.markdown("### Live Preview")
     preview_name = full_name if full_name else "Your Name"
     preview_contact = f"{email} | {phone}" if (email or phone) else "Your details here"
     st.markdown(f"""
@@ -49,12 +51,13 @@ with col2:
         <h4>EXPERIENCE</h4><p>{experience if experience else '...'}</p>
     </div>
     """, unsafe_allow_html=True)
+
     def create_pdf():
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Arial", 'B', 22)
         pdf.cell(0, 12, full_name, ln=True)
-                pdf.set_font("Arial", '', 11)
+        pdf.set_font("Arial", '', 11)
         pdf.set_text_color(100,100,100)
         pdf.cell(0, 8, f"{email} | {phone} | {linkedin}", ln=True)
         pdf.set_text_color(0,0,0)
@@ -75,7 +78,7 @@ with col2:
         pdf.multi_cell(0, 6, experience)
         return pdf.output(dest='S').encode('latin-1')
 
-    if st.button("📥 Download as PDF", use_container_width=True, type="primary"):
+    if st.button("Download as PDF", use_container_width=True, type="primary"):
         if not full_name:
             st.error("Pehle Full Name bhar de bhai!")
         else:
@@ -84,4 +87,3 @@ with col2:
             href = f'<a href="data:application/octet-stream;base64,{b64}" download="{full_name}_Resume.pdf" style="text-decoration:none;"><button style="width:100%; padding:12px; background:#6C63FF; color:white; border:none; border-radius:10px; font-size:16px;">Click Here to Download</button></a>'
             st.markdown(href, unsafe_allow_html=True)
             st.success("PDF Ready!")
-   
