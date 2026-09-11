@@ -29,19 +29,18 @@ with col1:
     st.caption("Recruiter-approved • ATS Optimized")
     with st.container(border=True):
         st.subheader("👤 Personal Info")
-        full_name = st.text_input("Full Name", value="MAYANK JAISWAL")
-        email = st.text_input("Email", value="mayank@email.com")
-        phone = st.text_input("Phone", value="9270xxxxxx")
-        linkedin = st.text_input("LinkedIn / Portfolio", value="linkedin.com/in/mayank")
-        location = st.text_input("Location", value="Nagpur, India")
+        full_name = st.text_input("Full Name", placeholder="Enter your full name")
+        email = st.text_input("Email", placeholder="Enter your email")
+        phone = st.text_input("Phone", placeholder="Enter phone number")
+        linkedin = st.text_input("LinkedIn / Portfolio", placeholder="Enter LinkedIn link")
+        location = st.text_input("Location", placeholder="Enter your city")
     with st.container(border=True):
         st.subheader("Details")
-        education = st.text_area("Education", value="B.Tech CSE - RTMNU - 2026", height=80)
-        skills = st.text_area("Skills (comma se alag)", value="Python, Java, SQL, React", height=80)
-        projects = st.text_area("Projects", value="ATS Resume Builder - Streamlit", height=80)
-        experience = st.text_area("Experience", value="Intern @ XYZ", height=80)
+        education = st.text_area("Education", placeholder="Enter your education", height=80)
+        skills = st.text_area("Skills (comma se alag)", placeholder="Python, Java, SQL", height=80)
+        projects = st.text_area("Projects", placeholder="Enter your projects", height=80)
+        experience = st.text_area("Experience", placeholder="Enter your experience", height=80)
 
-# ATS Score
 filled = sum([1 for x in [full_name, email, phone, education, skills, projects, experience] if x.strip() != ""])
 ats_score = int((filled / 7) * 100)
 
@@ -54,21 +53,22 @@ with col2:
         for s in skills.split(','):
             if s.strip():
                 skill_html += f'<span class="skill-tag">{s.strip()}</span> '
+    else:
+        skill_html = "<i style='color:#999;'>Skills will appear here</i>"
 
-    # FIXED PREVIEW - Ab sahi dikhega
     html_code = f"""
     <div class="resume-card" style="border-top: 6px solid #6C63FF;">
-        <h1 style="margin:0;">{full_name}</h1>
-        <p style="color:#666; font-size:13px;">{email} | {phone} | {location}<br>{linkedin}</p>
+        <h1 style="margin:0;">{full_name if full_name else 'Your Name'}</h1>
+        <p style="color:#666; font-size:13px;">{email if email else 'email'} | {phone if phone else 'phone'} | {location if location else 'location'}<br>{linkedin if linkedin else ''}</p>
         <hr>
         <h4 style="color:#6C63FF;">EDUCATION</h4>
-        <p style="font-size:14px;">{education}</p>
+        <p style="font-size:14px;">{education if education else 'Your education details...'}</p>
         <h4 style="color:#6C63FF;">SKILLS</h4>
         <p>{skill_html}</p>
         <h4 style="color:#6C63FF;">PROJECTS</h4>
-        <p style="font-size:14px;">{projects}</p>
+        <p style="font-size:14px;">{projects if projects else 'Your projects...'}</p>
         <h4 style="color:#6C63FF;">EXPERIENCE</h4>
-        <p style="font-size:14px;">{experience}</p>
+        <p style="font-size:14px;">{experience if experience else 'Your experience...'}</p>
     </div>
     """
     st.markdown(html_code, unsafe_allow_html=True)
@@ -81,7 +81,7 @@ with col2:
         pdf.rect(0,0,210,25,'F')
         pdf.set_y(6)
         pdf.set_font("Arial", 'B', 20); pdf.set_text_color(255,255,255)
-        pdf.cell(0, 10, full_name, align='C', ln=True)
+        pdf.cell(0, 10, full_name if full_name else "Your Name", align='C', ln=True)
         pdf.ln(15); pdf.set_text_color(0,0,0)
         pdf.set_font("Arial", 'B', 12); pdf.cell(0, 8, "EDUCATION", ln=True); pdf.set_font("Arial", '', 11); pdf.multi_cell(0, 6, education); pdf.ln(3)
         pdf.set_font("Arial", 'B', 12); pdf.cell(0, 8, "SKILLS", ln=True); pdf.set_font("Arial", '', 11); pdf.multi_cell(0, 6, skills); pdf.ln(3)
@@ -90,8 +90,11 @@ with col2:
         return pdf.output(dest='S').encode('latin-1')
 
     if st.button("📥 Download PRO PDF", use_container_width=True, type="primary"):
-        pdf_bytes = create_pdf()
-        b64 = base64.b64encode(pdf_bytes).decode()
-        href = f'<a href="data:application/octet-stream;base64,{b64}" download="{full_name}_Resume.pdf"><div style="width:100%; padding:14px; background:#6C63FF; color:white; text-align:center; border-radius:10px; font-weight:700;">⬇️ Click to Download</div></a>'
-        st.markdown(href, unsafe_allow_html=True)
-        st.balloons()
+        if not full_name:
+            st.warning("Please enter your name first")
+        else:
+            pdf_bytes = create_pdf()
+            b64 = base64.b64encode(pdf_bytes).decode()
+            href = f'<a href="data:application/octet-stream;base64,{b64}" download="Resume.pdf"><div style="width:100%; padding:14px; background:#6C63FF; color:white; text-align:center; border-radius:10px; font-weight:700;">⬇️ Click to Download</div></a>'
+            st.markdown(href, unsafe_allow_html=True)
+            st.balloons()
